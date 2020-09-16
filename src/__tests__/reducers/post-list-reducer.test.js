@@ -8,17 +8,21 @@ describe('postListReducer', () => {
       author: 'James',
       body: 'Pikachu',
       date: '4/21/1992',
+      picture: 'nice picture',
+      vote: 3,
       id: 1
     };
 
     test('Should successfully add new post data to masterPostList', () => {
-      const { title, author, body, date, id } = postData;
+      const { title, author, body, date, picture, vote, id } = postData;
       action = {
         type: 'ADD_POST',
         title: title,
         author: author,
         body: body,
         date: date,
+        picture: picture,
+        vote: vote,
         id: id
       };
 
@@ -28,6 +32,8 @@ describe('postListReducer', () => {
           author: author,
           body: body,
           date: date,
+          picture: picture,
+          vote: vote,
           id: id
         }
       });
