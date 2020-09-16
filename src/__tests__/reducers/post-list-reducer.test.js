@@ -13,6 +13,45 @@ describe('postListReducer', () => {
       id: 1
     };
 
+    const currentState = {
+      1: {
+        title: 'Pokemon',
+        author: 'James',
+        body: 'Pikachu',
+        date: '4/21/1992',
+        picture: 'nice picture',
+        vote: 3,
+        id: 1
+      },
+      2: {
+        title: 'GloomHaven',
+        author: 'Megan',
+        body: 'Scourge',
+        date: '4/22/1992',
+        picture: 'evil picture',
+        vote: 5,
+        id: 2
+      }
+    }
+
+    test('Should succesfully delete a post', () => {
+      action = {
+        type: 'DELETE_POST',
+        id: 1
+      };
+      expect(postListReducer(currentState, action)).toEqual({
+        2: {
+          title: 'GloomHaven',
+          author: 'Megan',
+          body: 'Scourge',
+          date: '4/22/1992',
+          picture: 'evil picture',
+          vote: 5,
+          id: 2
+        }
+      });
+    });
+
     test('Should successfully add new post data to masterPostList', () => {
       const { title, author, body, date, picture, vote, id } = postData;
       action = {
