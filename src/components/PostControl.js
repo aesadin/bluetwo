@@ -3,6 +3,8 @@ import AddPostForm from "./AddPostForm";
 import PostList from "./PostList";
 import PostDetail from "./PostDetail";
 import PostEdit from "./PostEdit";
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 class PostControl extends React.Component {
   
@@ -10,7 +12,6 @@ class PostControl extends React.Component {
     super(props);
     this.state = {
       formVisibleOnPage: false,
-      masterPostList: [],
       selectedPost: null,
       editing: false
     };
@@ -35,13 +36,44 @@ class PostControl extends React.Component {
   }
 
   handleAddingNewPostToList = (newPost) => {
-    const newMasterPostList = this.state.masterPostList.concat(newPost);
+    const { dispatch } = this.props;
+    const { id, title, author, body, date, picture, vote } = newPost;
+    const action = {
+        type: 'ADD_POST',
+        id: id,
+        title: title,
+        author: author,
+        body: body,
+        date: date,
+        picture: picture,
+        vote: vote,
+    }
+    dispatch(action);
+    this.setState({formVisibleOnPage: false});
+  }
+
+
+  handleEditingPostInList = (postToEdit) => {
+    const {dispatch} = this.props;
+    const {id, title, author, body, date, picture, vote} = postToEdit;
+    const action = {
+      type: 'EDIT_POST',
+      id: id,
+      title: title,
+      author: author,
+      body: body,
+      date: date,
+      picture: picture,
+      vote: vote,
+    }
+    dispatch(action);
     this.setState({
-      masterPostList: newMasterPostList,
-      formVisibleOnPage: false,
+      editing: false,
+      selectedPost: null
     });
   };
-
+  
+  
   handleEditingPostInList = (postToEdit) => {
     const editedMasterPostList = this.state.masterPostList
       .filter((post) => post.id !== this.state.selectedPost.id)
@@ -54,26 +86,22 @@ class PostControl extends React.Component {
   };
   
   handleDeletingPost = (id) => {
-    const newMasterPostList = this.state.masterPostList.filter(
-      (post) => post.id !== id
-    );
-    this.setState({
-      masterPostList: newMasterPostList,
-      selectedPost: null,
-    });
-  };
+    const { dispatch } = this.props;
+    const action = {
+      type: 'DELETE_POST',
+      id:id
+    }
+    dispatch(action);
+    this.setState({selectedPost: null});
+  }
   
   handleChangingSelectedPost = (id) => {
-    const selectedPost = this.state.masterPostList.filter(
-      (post) => post.id === id
-    )[0];
-    this.setState({ selectedPost: selectedPost });
+    const selectedPost = this.props.masterPostList[id];
+    this.setState({selectedPost: selectedPost});
   };
 
   handleChangingSelectedUpvote = (id) => {
-    const selectedPost = this.state.masterPostList.filter(
-      (post) => post.id === id
-    )[0];
+    const selectedPost = this.props.masterPostList[id];
     // selectedPost.vote += 1; Solution 2 not functional programming
     const incrementedPost = Object.assign({}, selectedPost, {vote: selectedPost.vote + 1});
     // const incrementedPost2 = { ...selectedPost, vote: selectedPost.vote + 1}; Solution 3 spread operator
@@ -86,9 +114,7 @@ class PostControl extends React.Component {
   };
 
   handleChangingSelectedDownvote = (id) => {
-    const selectedPost = this.state.masterPostList.filter(
-      (post) => post.id === id
-    )[0];
+    const selectedPost = this.props.masterPostList[id];
     if (selectedPost.vote > 0) {
       const decrementedPost = Object.assign({}, selectedPost, {vote: selectedPost.vote - 1})
       const editedMasterPostList = this.state.masterPostList
@@ -100,9 +126,7 @@ class PostControl extends React.Component {
   } 
 };
 
-
-
-render (){
+  render (){
   let currentlyVisibleState = null;
   let buttonText = null;
 
@@ -117,7 +141,7 @@ render (){
     currentlyVisibleState = <AddPostForm onNewPostCreation={this.handleAddingNewPostToList} />
     buttonText = "Return to Posts";
   } else {
-    currentlyVisibleState = <PostList postList={this.state.masterPostList} onPostSelection={this.handleChangingSelectedPost} onUpvoteSelection={this.handleChangingSelectedUpvote} onDownvoteSelection={this.handleChangingSelectedDownvote}/>
+    currentlyVisibleState = <PostList postList={this.props.masterPostList} onPostSelection={this.handleChangingSelectedPost} onUpvoteSelection={this.handleChangingSelectedUpvote} onDownvoteSelection={this.handleChangingSelectedDownvote}/>
     buttonText = "Add Post";
   }
   
@@ -129,5 +153,17 @@ render (){
     );
   }  
 }
+
+PostControl.propTypes = {
+  masterPropList: PropTypes.object
+};
+
+const mapStateToProps = state => {
+  return {
+    masterPostList: state
+  }
+}
+
+PostControl = connect(mapStateToProps)(PostControl);
 
 export default PostControl;
