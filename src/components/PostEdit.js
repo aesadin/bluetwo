@@ -13,7 +13,7 @@ function PostEdit(props) {
       date: event.target.date.value,
       picture: event.target.picture.value,
       vote: post.vote,
-      id: post.id,
+      id: post.id, // keep the id the same, edit everything else using event listener
     });
   }
 

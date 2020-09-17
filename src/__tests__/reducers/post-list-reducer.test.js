@@ -78,6 +78,46 @@ describe('postListReducer', () => {
       });
     });
 
+
+    // add update functionality that uses add ticket functionality plus allows it to edit ticket information and then add the ticket
+    test('Should successfully update a post', () => {
+      const { title, author, body, date, picture, vote, id } = postData;
+      action = {
+        type: 'ADD_POST',
+        title: title,
+        author: author, 
+        body: body,
+        date: date,
+        picture: picture,
+        vote: vote,
+        id: id
+      }
+
+      // had to define new variables to input into expect statement below
+      const stateToUpdate = postListReducer({}, action);
+      const updateAction =  {
+        type: 'ADD_POST',
+        title: "funny post",
+        author: "Allison",
+        body: "blah blah",
+        date: date,
+        picture: picture,
+        vote: vote,
+        id: id
+      }
+      expect(postListReducer(stateToUpdate, updateAction)).toEqual({
+        [id] : {
+          title: "funny post",
+          author: "Allison",
+          body: "blah blah",
+          date: date,
+          picture: picture,
+          vote: vote,
+          id: id
+        }
+      });
+    });
+
     test('Should return default state if there is no action type passed into the reducer', () => {
       expect(postListReducer({}, { type: null })).toEqual({});
   });

@@ -52,12 +52,12 @@ class PostControl extends React.Component {
     this.setState({formVisibleOnPage: false});
   }
 
-
+// we are adding the updated post to the postlist, it uses the same id and adds the new information given by the user (from postEdit)
   handleEditingPostInList = (postToEdit) => {
     const {dispatch} = this.props;
     const {id, title, author, body, date, picture, vote} = postToEdit;
     const action = {
-      type: 'EDIT_POST',
+      type: 'ADD_POST',
       id: id,
       title: title,
       author: author,
@@ -73,17 +73,16 @@ class PostControl extends React.Component {
     });
   };
   
-  
-  handleEditingPostInList = (postToEdit) => {
-    const editedMasterPostList = this.state.masterPostList
-      .filter((post) => post.id !== this.state.selectedPost.id)
-      .concat(postToEdit);
-    this.setState({
-      masterPostList: editedMasterPostList,
-      editing: false,
-      selectedPost: null,
-    });
-  };
+  // handleEditingPostInList = (postToEdit) => {
+  //   const editedMasterPostList = this.state.masterPostList
+  //     .filter((post) => post.id !== this.state.selectedPost.id)
+  //     .concat(postToEdit);
+  //   this.setState({
+  //     masterPostList: editedMasterPostList,
+  //     editing: false,
+  //     selectedPost: null,
+  //   });
+  // };
   
   handleDeletingPost = (id) => {
     const { dispatch } = this.props;
@@ -100,17 +99,22 @@ class PostControl extends React.Component {
     this.setState({selectedPost: selectedPost});
   };
 
-  handleChangingSelectedUpvote = (id) => {
-    const selectedPost = this.props.masterPostList[id];
-    // selectedPost.vote += 1; Solution 2 not functional programming
-    const incrementedPost = Object.assign({}, selectedPost, {vote: selectedPost.vote + 1});
-    // const incrementedPost2 = { ...selectedPost, vote: selectedPost.vote + 1}; Solution 3 spread operator
-    const editedMasterPostList = this.state.masterPostList
-      .filter(post => post.id !== id)
-      .concat(incrementedPost);
-    this.setState({
-      masterPostList: editedMasterPostList,
-    })
+  handleChangingSelectedUpvote = (upVoteId) => {
+    const postToUpvote = this.props.masterPostList[upVoteId];
+    const {dispatch} = this.props;
+    const {id, title, author, body, date, picture, vote} = postToUpvote;
+    const upvote = vote + 1;
+    const action = {
+      type: 'ADD_POST',
+      id: id,
+      title: title,
+      author: author,
+      body: body,
+      date: date,
+      picture: picture,
+      vote: upvote
+    }
+    dispatch(action);
   };
 
   handleChangingSelectedDownvote = (id) => {
