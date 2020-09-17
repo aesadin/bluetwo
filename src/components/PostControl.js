@@ -117,18 +117,25 @@ class PostControl extends React.Component {
     dispatch(action);
   };
 
-  handleChangingSelectedDownvote = (id) => {
-    const selectedPost = this.props.masterPostList[id];
-    if (selectedPost.vote > 0) {
-      const decrementedPost = Object.assign({}, selectedPost, {vote: selectedPost.vote - 1})
-      const editedMasterPostList = this.state.masterPostList
-        .filter(post => post.id !== id)
-        .concat(decrementedPost);
-      this.setState({
-      masterPostList: editedMasterPostList,
-    })
-  } 
-};
+  handleChangingSelectedDownvote = (downVoteId) => {
+    const postToDownvote = this.props.masterPostList[downVoteId];
+    const {dispatch} = this.props;
+    const {id, title, author, body, date, picture, vote} = postToDownvote;
+    const downvote = vote -1;
+      if (vote > 0) {
+        const action = {
+          type: 'ADD_POST',
+          id: id,
+          title: title,
+          author: author,
+          body: body,
+          date: date,
+          picture: picture,
+          vote: downvote,
+        }
+      dispatch(action);
+    }
+  };
 
   render (){
   let currentlyVisibleState = null;
