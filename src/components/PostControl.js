@@ -11,7 +11,6 @@ class PostControl extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      formVisibleOnPage: false,
       selectedPost: null,
       editing: false
     };
@@ -25,9 +24,11 @@ class PostControl extends React.Component {
         editing: false,
       });
     } else {
-      this.setState((prevState) => ({
-        formVisibleOnPage: !prevState.formVisibleOnPage,
-      }));
+      const { dispatch } = this.props;
+      const action = {
+        type: 'TOGGLE_FORM'
+      }
+      dispatch(action);
     }
   };
 
@@ -49,7 +50,10 @@ class PostControl extends React.Component {
         vote: vote,
     }
     dispatch(action);
-    this.setState({formVisibleOnPage: false});
+    const action2 = {
+      type: 'TOGGLE_FORM'
+    }
+    dispatch(action2);
   }
 
 // we are adding the updated post to the postlist, it uses the same id and adds the new information given by the user (from postEdit)
@@ -148,7 +152,7 @@ class PostControl extends React.Component {
     currentlyVisibleState = <PostDetail post={this.state.selectedPost} onClickingDelete={this.handleDeletingPost}
     onClickingEdit={this.handleEditClick} />
     buttonText = "Return to Posts";
-  } else if (this.state.formVisibleOnPage) {
+  } else if (this.props.formVisibleOnPage) {
     currentlyVisibleState = <AddPostForm onNewPostCreation={this.handleAddingNewPostToList} />
     buttonText = "Return to Posts";
   } else {
@@ -166,12 +170,14 @@ class PostControl extends React.Component {
 }
 
 PostControl.propTypes = {
-  masterPropList: PropTypes.object
+  masterPropList: PropTypes.object,
+  formVisibleOnPage: PropTypes.bool
 };
 
 const mapStateToProps = state => {
   return {
-    masterPostList: state
+    masterPostList: state.masterPostList,
+    formVisibleOnPage: state.formVisibleOnPage
   }
 }
 
